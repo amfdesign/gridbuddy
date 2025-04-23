@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GridBuddy</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav>
+    <button id="tab-status">Status</button>
+    <button id="tab-devices">Geräte</button>
+    <button id="tab-forecast">Forecast</button>
+    <button id="tab-settings">Einstellungen</button>
+  </nav>
+  <section id="status" class="tab">Lade Status...</section>
+  <section id="devices" class="tab" style="display:none;">Geräteliste...</section>
+  <section id="forecast" class="tab" style="display:none;">Forecast-Chart...</section>
+  <section id="settings" class="tab" style="display:none;">Einstellungen...</section>
+  <script src="settings.js"></script>
+</body>
+</html>
