@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # GridBuddy Entrypoint
 
 # Load HA-Add-on Options
