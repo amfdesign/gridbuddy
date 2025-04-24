@@ -2,25 +2,46 @@
   "name": "GridBuddy",
   "version": "0.1.0",
   "slug": "gridbuddy",
-  "description": "Modulares Batterie- und Geräte-Management als HA Add-on",
-  "startup": "services",
+  "description": "Intelligente Lade-/Entlade-Steuerung auf Basis von Strompreis, Wetter und Gerätenutzung.",
+  "startup": "application",
   "boot": "auto",
+  "arch": ["aarch64", "amd64", "armv7", "i386"],
   "ingress": true,
+  "ingress_port": 3000,
+  "panel_icon": "mdi:home-battery",
+  "panel_title": "GridBuddy",
+  "homeassistant_api": true,
+  "auth_api": false,
   "host_network": false,
-  "options": {
-    "batteryCapacityWh": 10000,
-    "chargePowerW": 3000,
-    "dischargePowerW": 3000,
-    "tibberToken": "",
-    "haToken": "",
-    "ollamaServer": ""
+  "ports": {
+    "3000/tcp": 3000
   },
   "schema": {
-    "batteryCapacityWh": { "type": "number", "minimum": 0 },
-    "chargePowerW":     { "type": "number", "minimum": 0 },
-    "dischargePowerW":  { "type": "number", "minimum": 0 },
-    "tibberToken":      { "type": "string" },
-    "haToken":          { "type": "string" },
-    "ollamaServer":     { "type": "string" }
+    "batteryCapacityWh": "float(100,100000)",
+    "chargePowerW": "float(50,10000)",
+    "dischargePowerW": "float(50,10000)",
+    "minBatteryLevelPercent": "int(0,100)",
+    "maxBatteryLevelPercent": "int(0,100)",
+    "fixedPriceThresholdCents": "float(0,100)",
+    "priceThresholdFactor": "float(0,10)",
+    "highLoadFactor": "float(0,10)",
+    "dynamicThresholdMode": "int(0,2)",
+    "enableCalibration": "bool",
+    "tibberToken": "str?",
+    "ollamaServer": "str?"
+  },
+  "options": {
+    "batteryCapacityWh": 4000,
+    "chargePowerW": 800,
+    "dischargePowerW": 1000,
+    "minBatteryLevelPercent": 10,
+    "maxBatteryLevelPercent": 90,
+    "fixedPriceThresholdCents": 25,
+    "priceThresholdFactor": 0.5,
+    "highLoadFactor": 1.5,
+    "dynamicThresholdMode": 2,
+    "enableCalibration": false,
+    "tibberToken": "",
+    "ollamaServer": ""
   }
 }
