@@ -7,6 +7,15 @@ const statusApi = require('./status');
 const settingsApi = require('./settings');
 
 const app = express();
+const path = require('path');
+
+// Static UI files bereitstellen
+app.use(express.static(path.join(__dirname, '../../ui')));
+
+// Direktzugriff auf "/"
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../ui/index.html'));
+});
 app.use(bodyParser.json());
 
 // Device-Type Definition
