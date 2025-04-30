@@ -28,6 +28,12 @@ function loadModules() {
     }
   }
 
++  // tibberPrice immer zuerst ausführen
++  loaded.sort((a, b) => {
++    if (a.id === 'tibberPrice' && b.id !== 'tibberPrice') return -1;
++    if (b.id === 'tibberPrice' && a.id !== 'tibberPrice') return 1;
++    return 0;
++  });
   return loaded;
 }
 
