@@ -1,0 +1,25 @@
+/* styles.css */
+
+/* Weißer Text auf beliebigem Hintergrund */
+body {
+  color: white;
+}
+
+/* Auch alle Sektionen (Tabs) weiß einfärben */
+.tab {
+  color: white;
+}
+
+/* Optional: Navigations-Buttons anpassen */
+nav button {
+  color: white;
+  background: transparent;
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+/* Optional: Aktiven Tab hervorheben */
+nav button.active {
+  text-decoration: underline;
+}
