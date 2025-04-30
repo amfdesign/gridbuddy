@@ -1,6 +1,6 @@
 {
   "name": "GridBuddy",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "slug": "gridbuddy",
   "description": "Intelligente Lade-/Entlade-Steuerung auf Basis von Strompreis, Wetter und Gerätenutzung.",
   "startup": "application",
