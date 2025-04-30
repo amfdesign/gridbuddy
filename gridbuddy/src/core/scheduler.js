@@ -1,34 +1,40 @@
+// src/core/scheduler.js
+
 const cron = require('node-cron');
+const { loadModules } = require('./loader');
 const storage = require('../settings/storage');
-const devices = require('../devices');
 
-// Placeholder für HA/Tibber-Clients
-const apiClients = require('./apiClients');
+// Lade alle Module aus src/modules
+const modules = loadModules();
 
+// Cron-Job: alle 5 Minuten (oder passe den Zeitplan nach Bedarf an)
+cron.schedule('*/5 * * * *', async () => {
+  console.log('🕒 Running GridBuddy scheduler...');
+  await runAll();
+});
+
+// Die Run-Funktion, die alle Module ausführt
 async function runAll() {
-  const globalConfig = storage.getGlobalConfig();
-  const instances = storage.getDevices();
-  const plugins = devices.getPlugins();
-  const results = [];
+  const config = storage.getGlobalConfig();
+  const devices = storage.getDevices();
 
-  for (const inst of instances) {
-    const plugin = plugins.find(p => p.type === inst.type);
-    if (!plugin) continue;
+  for (const { id, module } of modules) {
+    console.log(`▶️  Starte Modul ${id}`);
     try {
-      const result = await plugin.run(inst.config, globalConfig, apiClients);
-      results.push({ id: inst.id, type: inst.type, result });
-    } catch (err) {
-      console.error(`Error running plugin ${inst.type}:`, err);
+      // Initialisierung nur beim ersten Lauf
+      if (!module._initialized) {
+        await module.initialize(config, storage);
+        module._initialized = true;
+      }
+      // Lauf-Logik
+      await module.run(devices, config, storage);
+    } catch (e) {
+      console.error(`❌ Fehler in Modul ${id}:`, e);
     }
   }
 
-  storage.saveResults(results);
+  // Ergebnisse (z.B. geänderte device.action) persistent speichern
+  storage.saveResults(devices);
 }
 
-// Cron-Job alle 5 Minuten
-cron.schedule('*/5 * * * *', () => {
-  console.log('Running GridBuddy scheduler...');
-  runAll();
-});
-
-exports.getStatus = async () => storage.getResults();
+module.exports = { runAll };
