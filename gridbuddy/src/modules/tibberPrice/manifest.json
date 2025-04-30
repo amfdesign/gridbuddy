@@ -1,0 +1,5 @@
+{
+  "id": "tibberPrice",
+  "name": "Tibber-Preis",
+  "description": "Lädt den aktuellen Strompreis von Tibber"
+}
