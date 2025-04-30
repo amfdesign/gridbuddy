@@ -4,10 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Lädt alle Module aus src/modules,
- * deren Unterordner jeweils ein manifest.json enthalten.
- * Gibt ein Array von Module-Objekten zurück,
- * jedes mit { id, module }.
+ * Lädt alle Module aus src/modules und sorgt dafür,
+ * dass tibberPrice als Erstes ausgeführt wird.
  */
 function loadModules() {
   const modulesDir = path.join(__dirname, '..', 'modules');
@@ -28,12 +26,13 @@ function loadModules() {
     }
   }
 
-+  // tibberPrice immer zuerst ausführen
-+  loaded.sort((a, b) => {
-+    if (a.id === 'tibberPrice' && b.id !== 'tibberPrice') return -1;
-+    if (b.id === 'tibberPrice' && a.id !== 'tibberPrice') return 1;
-+    return 0;
-+  });
+  // tibberPrice immer zuerst ausführen
+  loaded.sort((a, b) => {
+    if (a.id === 'tibberPrice' && b.id !== 'tibberPrice') return -1;
+    if (b.id === 'tibberPrice' && a.id !== 'tibberPrice') return 1;
+    return 0;
+  });
+
   return loaded;
 }
 
