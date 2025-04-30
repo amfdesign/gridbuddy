@@ -2,7 +2,7 @@
 
 const storage = require('../settings/storage');
 
-// Default-Werte aus ENV (geladen von entrypoint.sh) oder harte Fallback-Literale
+// Default-Konfiguration, nur für den ersten GET
 const defaultConfig = {
   batteryCapacityWh: process.env.GRIDBUDDY_BATTERY_CAPACITY_W
     ? parseFloat(process.env.GRIDBUDDY_BATTERY_CAPACITY_W)
@@ -24,20 +24,29 @@ const defaultConfig = {
   ollamaServer: process.env.GRIDBUDDY_OLLAMA_SERVER || ''
 };
 
+// GET /api/settings
 exports.get = (req, res) => {
+  console.log('⚙️  API SETTINGS GET aufgerufen');
   let cfg = storage.getGlobalConfig();
 
-  // Beim ersten Mal: Default-Werte persistieren und zurückgeben
   if (!cfg || Object.keys(cfg).length === 0) {
+    console.log('  – Noch keine Konfiguration, speichere Defaults:', defaultConfig);
     storage.setGlobalConfig(defaultConfig);
     cfg = defaultConfig;
   }
-
+  console.log('  – Gibt zurück:', cfg);
   res.json(cfg);
 };
 
+// POST /api/settings
 exports.update = (req, res) => {
-  const newCfg = req.body;
-  storage.setGlobalConfig(newCfg);
-  res.status(204).end();
+  console.log('⚙️  API SETTINGS UPDATE aufgerufen mit Body:', req.body);
+  try {
+    storage.setGlobalConfig(req.body);
+    console.log('  – Gespeichert, aktueller Inhalt:', storage.getGlobalConfig());
+    return res.status(204).end();
+  } catch (err) {
+    console.error('  – Fehler beim Speichern:', err);
+    return res.status(500).json({ error: err.message });
+  }
 };
