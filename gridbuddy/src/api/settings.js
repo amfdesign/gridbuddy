@@ -1,36 +1,43 @@
 // src/api/settings.js
 
-const fs = require('fs');
-const path = require('path');
+const storage = require('../settings/storage');
 
-// Hier liegt Home Assistant die persistente Optionen-Datei ab:
-const OPTIONS_PATH = '/data/options.json';
-
-// GET /api/settings
-exports.get = (req, res) => {
-  try {
-    // Datei einlesen
-    const raw = fs.readFileSync(OPTIONS_PATH, 'utf8');
-    const cfg = JSON.parse(raw);
-    return res.json(cfg);
-  } catch (err) {
-    // Falls noch keine Datei da ist: leeres Objekt zurückgeben
-    return res.json({});
-  }
+// Default-Werte aus ENV (geladen von entrypoint.sh) oder harte Fallback-Literale
+const defaultConfig = {
+  batteryCapacityWh: process.env.GRIDBUDDY_BATTERY_CAPACITY_W
+    ? parseFloat(process.env.GRIDBUDDY_BATTERY_CAPACITY_W)
+    : 4000,
+  chargePowerW: process.env.GRIDBUDDY_CHARGE_POWER_W
+    ? parseFloat(process.env.GRIDBUDDY_CHARGE_POWER_W)
+    : 800,
+  dischargePowerW: process.env.GRIDBUDDY_DISCHARGE_POWER_W
+    ? parseFloat(process.env.GRIDBUDDY_DISCHARGE_POWER_W)
+    : 1000,
+  minBatteryLevelPercent: 10,
+  maxBatteryLevelPercent: 90,
+  fixedPriceThresholdCents: 25,
+  priceThresholdFactor: 0.5,
+  highLoadFactor: 1.5,
+  dynamicThresholdMode: 2,
+  enableCalibration: false,
+  tibberToken: process.env.GRIDBUDDY_TIBBER_TOKEN || '',
+  ollamaServer: process.env.GRIDBUDDY_OLLAMA_SERVER || ''
 };
 
-// POST /api/settings
-exports.update = (req, res) => {
-  try {
-    // Body (JSON) direkt in OPTIONS_PATH schreiben
-    fs.writeFileSync(
-      OPTIONS_PATH,
-      JSON.stringify(req.body, null, 2),
-      'utf8'
-    );
-    return res.status(204).end();
-  } catch (err) {
-    console.error('Fehler beim Speichern der Einstellungen:', err);
-    return res.status(500).json({ error: err.message });
+exports.get = (req, res) => {
+  let cfg = storage.getGlobalConfig();
+
+  // Beim ersten Mal: Default-Werte persistieren und zurückgeben
+  if (!cfg || Object.keys(cfg).length === 0) {
+    storage.setGlobalConfig(defaultConfig);
+    cfg = defaultConfig;
   }
+
+  res.json(cfg);
+};
+
+exports.update = (req, res) => {
+  const newCfg = req.body;
+  storage.setGlobalConfig(newCfg);
+  res.status(204).end();
 };
