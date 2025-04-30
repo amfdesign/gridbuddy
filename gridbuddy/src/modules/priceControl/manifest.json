@@ -1,0 +1,5 @@
+{
+  "id": "priceControl",
+  "name": "Preis-basierte Steuerung",
+  "description": "Lädt wenn Preis < fixedPriceThreshold, entlädt wenn >"
+}
