@@ -42,7 +42,12 @@ exports.get = (req, res) => {
 exports.update = (req, res) => {
   console.log('⚙️  API SETTINGS UPDATE aufgerufen mit Body:', req.body);
   try {
-    storage.setGlobalConfig(req.body);
+    // 1) Alte Config auslesen
+    const current = storage.getGlobalConfig();
+    // 2) Neue Felder drüber–mappen (nur die im Form gesendeten)
+    const merged  = { ...current, ...req.body };
+    // 3) Gemeinsame Config abspeichern
+    storage.setGlobalConfig(merged);
     console.log('  – Gespeichert, aktueller Inhalt:', storage.getGlobalConfig());
     return res.status(204).end();
   } catch (err) {
